@@ -11,6 +11,7 @@ import sys
 # This gets the Qt stuff
 import PyQt5
 from PyQt5.QtWidgets import *
+# from PyQt5 import QtCore
 
 # This is our window from QtCreator
 import mainwindow_auto
@@ -64,8 +65,21 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
         super(self.__class__, self).__init__()
         self.setupUi(self) # gets defined in the UI file
         self.model = model
+
         setTempString = str(self.model.setTemp)
+        curTempString = str(self.model.ambientTemp)
+
+        self.set_temp_box.setReadOnly(True)
+        self.curent_temp_box.setReadOnly(True)
+
+        self.set_temp_box.setFontPointSize(40)
+        self.curent_temp_box.setFontPointSize(40)
+
+        # self.set_temp_box.setAlignment(QtCore.Qt.AlignCenter)
+        # self.curent_temp_box.setAlignment(QtCore.Qt.AlignCenter)
+
         self.set_temp_lbl.setText(setTempString)
+        self.curent_temp_box.setText(curTempString)
         self.runSystem()
 
         ### Hooks to for buttons

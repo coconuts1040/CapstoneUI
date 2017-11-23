@@ -46,16 +46,13 @@ class DecisionAlgorithm(object):
 #***************************************************************************************#
     # Controls whether the blinds are up or down.
     def controlBlinds(self):
-        if (self.human == True):
-            if (self.blinds == True):
-                self.blinds = True
-            else:
+        if self.human and not self.blinds:
                 if (self.ambientLight >= self.setLight):
                     self.blinds = False
                 else:
                     self.blinds = True
-        else:
-            if (self.blinds == True):
+        elif not self.human:
+            if self.blinds:
                 if (self.outTemp > self.setTemp):
                     self.blinds = False
                 else:
@@ -66,7 +63,7 @@ class DecisionAlgorithm(object):
     #***********************************************************************************#
     # Controls whether the lights are on or off.
     def controlLights(self):
-        if (self.human == True):
+        if self.human:
             if (self.ambientLight < self.setLight):
                 self.light = True
         else:
@@ -76,54 +73,38 @@ class DecisionAlgorithm(object):
     # Controls the HVAC for heating and cooling and whether the windows are open or shut.
     def controlTemp(self):
         # Cooling
-        if (self.coolingOn == True):
+        if self.coolingOn:
             if (self.ambientTemp > self.setTemp):
                 if (self.outTemp > self.ambientTemp):
-                    if (self.ecoMode == False):
-                        self.window = False
-                        # GPIO.output(coolPin, GPIO.HIGH) # cooling = True
-                    else:
-                        self.window = False
-                        # GPIO.output(coolPin, GPIO.HIGH) # cooling = True
+                    self.window = False
+                    # GPIO.output(coolPin, GPIO.HIGH) # cooling = True
                 else: # outTemp < ambientTemp
                     if (self.outTemp < self.setTemp):
-                        if (self.ecoMode == False):
-                            self.window = True
-                            # GPIO.output(coolPin, GPIO.LOW) # cooling = False
-                        else:
-                            self.window = True
-                            # GPIO.output(coolPin, GPIO.LOW) # cooling = False
+                        self.window = True
+                        # GPIO.output(coolPin, GPIO.LOW) # cooling = False
                     else: # outTemp > setTemp
-                        if (self.ecoMode == False):
+                        if not self.ecoMode:
                             self.window = True
                             # GPIO.output(coolPin, GPIO.HIGH) # cooling = True
                         else:
                             self.window = True
                             # GPIO.output(coolPin, GPIO.LOW) # cooling = False
-            else: # ambientTemp < setTemp
+            else: # ambientTemp <= setTemp
                 self.window = False
                 # GPIO.output(coolPin, GPIO.LOW) # heater = False
 
         # Heating
-        elif (self.heatingOn == True):
+        elif self.heatingOn:
             if (self.ambientTemp < self.setTemp):
                 if (self.outTemp < self.ambientTemp):
-                    if (self.ecoMode == False):
-                        self.window = False
-                        # GPIO.output(heatPin, GPIO.HIGH) # heater = True
-                    else:
-                        self.window = False
-                        # GPIO.output(heatPin, GPIO.HIGH) # heater = True
+                    self.window = False
+                    # GPIO.output(heatPin, GPIO.HIGH) # heater = True
                 else: # outTemp > ambientTemp
                     if (self.outTemp > self.setTemp):
-                        if (self.ecoMode == False):
-                            self.window = True
-                            # GPIO.output(heatPin, GPIO.LOW) # heater = False
-                        else:
-                            self.window = True
-                            # GPIO.output(heatPin, GPIO.LOW) # heater = False
+                        self.window = True
+                        # GPIO.output(heatPin, GPIO.LOW) # heater = False
                     else: # outTemp < setTemp
-                        if (self.ecoMode == False):
+                        if not self.ecoMode:
                             self.window = True
                             # GPIO.output(heatPin, GPIO.HIGH) # heater = True
                         else:
