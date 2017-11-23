@@ -37,13 +37,13 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
     def pressedUpTempBtn(self):
         self.setTemp = self.setTemp + 1
         setTempString = str(self.setTemp)
-        self.set_temp_box.setText(setTempString)
+        self.set_temp_lbl.setText(setTempString)
         print(self.setTemp)
 
     def pressedDownTempBtn(self):
         self.setTemp = self.setTemp - 1
         setTempString = str(self.setTemp)
-        self.set_temp_box.setText(setTempString)
+        self.set_temp_lbl.setText(setTempString)
         print(self.setTemp)
 
     def __init__(self):
@@ -51,7 +51,7 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
         self.setupUi(self) # gets defined in the UI file
         self.setTemp = 70
         setTempString = str(self.setTemp)
-        self.set_temp_box.setText(setTempString)
+        self.set_temp_lbl.setText(setTempString)
 
         ### Hooks to for buttons
         self.normal_btn.clicked.connect(lambda: self.pressedNormalBtn())
