@@ -64,9 +64,11 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
         super(self.__class__, self).__init__()
         self.setupUi(self) # gets defined in the UI file
         self.model = model
+        self.model.getSensorData()
+        self.model.setTemp = self.model.toFahrenheit()
 
         setTempString = str(self.model.setTemp)
-        curTempString = str(self.model.ambientTemp)
+        curTempString = str(self.model.toFahrenheit())
 
         self.set_temp_lbl.setText(setTempString)
         self.current_tmp_lbl.setText(curTempString)
@@ -84,6 +86,7 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
     def runSystem(self):
         threading.Timer(1.0, self.runSystem).start()
         try:
+            self.model.getSensorData()
             self.model.controlBlinds()
             self.model.controlLights()
             self.model.controlTemp()
