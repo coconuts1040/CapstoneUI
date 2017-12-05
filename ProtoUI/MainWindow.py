@@ -77,7 +77,7 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
         self.setupUi(self) # gets defined in the UI file
         self.model = model
         self.model.getSensorData()
-        self.model.getWeatherData()
+        self.runWeather()
         self.model.setTemp = self.model.ambientTemp
 
         setTempString = str(self.model.setTemp)
@@ -86,7 +86,9 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
         self.set_temp_lbl.setText(setTempString)
         self.current_tmp_lbl.setText(curTempString)
         self.normal_btn.setStyleSheet('QPushButton {background-color: #d9d9f2;}')
-        self.runSystem()
+        
+        self.weatherCount = 0
+        self.runSensors()
 
         ### Hooks to for buttons
         self.normal_btn.clicked.connect(lambda: self.pressedNormalBtn())
@@ -96,9 +98,13 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
         self.up_temp_btn.clicked.connect(lambda: self.pressedUpTempBtn())
         self.down_temp_btn.clicked.connect(lambda: self.pressedDownTempBtn())
 
-    # Runs the decision algorithm constantly
-    def runSystem(self):
-        threading.Timer(1.0, self.runSystem).start()
+    # Runs the decision algorithm constantly, grabbing sensor data.
+    def runSensors(self):
+        if self.weatherCount >= 1800:
+            self.runWeather()
+            self.weatherCount = 0
+        
+        self.sensorTimer = threading.Timer(1.0, self.runSensors).start()
         try:
             self.model.getSensorData()
             curTempString = str(self.model.ambientTemp)
@@ -108,8 +114,15 @@ class MainWindow(QMainWindow, mainwindow_auto.Ui_MainWindow):
             self.model.controlLights()
             self.model.controlTemp()
 
+            self.weatherCount = self.weatherCount + 1
+
         except KeyboardInterrupt: # If CTRL+C is pressed, exit cleanly:
             self.model.cleanupGPIO()
+
+    # Gets the current weather data.
+    def runWeather(self):
+        self.model.getWeatherData()
+        print('heyoooo')
 
 # passes the model to the MainWindow controller, will be moved to its own file
 def main():
